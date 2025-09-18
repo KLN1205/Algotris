@@ -1,0 +1,1 @@
+const piece = new Piece(TETROMINOES.T, "#4fc3f7", { x: 3, y: 0 });
