@@ -50,8 +50,8 @@ function getColor(value) {
   const colors = ['#000', '#FF0000', '#00FF00', '#0000FF', '#FFFF00']; // Exemple de couleurs
   return colors[value] || '#000';
 }
+ drawGrid();
 let p = new Piece(TETROMINOES.T, "#4fc3f7", { x: 3, y: 0 });
 p.GenererForme();
 p.draw(ctx,CELL_SIZE);
 // Appelez drawGrid() après avoir initialisé le canvas et le contexte
- drawGrid();

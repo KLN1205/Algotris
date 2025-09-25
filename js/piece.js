@@ -55,7 +55,7 @@ class Piece {
                 }
             }
         }
-        console.log(this.position);
+        console.log(this.position);s
     }
     
     Descendre() {
