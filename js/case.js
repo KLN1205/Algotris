@@ -64,4 +64,3 @@ function getColor() {
 let p = new Piece(choisirForm(), getColor(), { x: 3, y: 0 });
 p.GenererForme();
 p.draw(ctx,CELL_SIZE);
-

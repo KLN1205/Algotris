@@ -59,8 +59,21 @@ class Piece {
         console.log(this.position);
     }
     
-    Descendre() {
+    Descendre(ctx) {
         this.position.y += 1;
+        this.draw(ctx);
+    }
+
+    right() 
+    {
+        this.position.x += 1;
+        this.draw(ctx);
+    }
+     
+    left() 
+    {
+        this.position.x -= 1;
+        this.draw(ctx);
     }
 
 }
