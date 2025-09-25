@@ -100,3 +100,4 @@ setInterval(() => {
     p.Descendre(ctx,CELL_SIZE,20);
 }, 1000);
 p.draw(ctx,CELL_SIZE);
+console.log(p);
