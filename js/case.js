@@ -23,12 +23,12 @@ reinitialiserGrille();
     p.draw(ctx,CELL_SIZE);
 });
 btnRotateP90.addEventListener("click", function() {
-    p.Rotate(ctx,true);
+    p.Rotate(true);
 reinitialiserGrille();
     p.draw(ctx,CELL_SIZE);
 });
 btnRotateM90.addEventListener("click", function() {
-    p.Rotate(ctx,false);
+    p.Rotate(false);
     reinitialiserGrille();
     p.draw(ctx,CELL_SIZE);
 });
