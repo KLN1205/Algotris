@@ -59,9 +59,9 @@ class Piece {
         console.log(this.position);
     }
     
-    Descendre(ctx) {
+    Descendre(ctx,CELL_SIZE) {
         this.position.y += 1;
-        this.draw(ctx);
+        this.draw(ctx,CELL_SIZE);
     }
 
     right() 

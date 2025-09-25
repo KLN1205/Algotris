@@ -63,4 +63,10 @@ function getColor() {
 
 let p = new Piece(choisirForm(), getColor(), { x: 3, y: 0 });
 p.GenererForme();
+setInterval(() => {
+    
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawGrid();
+    p.Descendre(ctx,CELL_SIZE);
+}, 1000);
 p.draw(ctx,CELL_SIZE);
