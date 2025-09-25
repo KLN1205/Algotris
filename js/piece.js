@@ -3,11 +3,12 @@ class Piece {
     color;
     position;
     image;
-
+    rotate;
     constructor(form, color, position) {
         this.form = form;
         this.color = color;
         this.position = position;
+        this.rotate = 0;
 
 
         this.image = this.GenererForme();
@@ -60,20 +61,36 @@ class Piece {
     }
     
     Descendre(ctx,CELL_SIZE) {
-        this.position.y += 1;
-        this.draw(ctx,CELL_SIZE);
+
+        if(this.position.y < 21 - this.form[1].length){
+
+            this.position.y += 1;
+            this.draw(ctx,CELL_SIZE);
+        }else{
+            this.draw(ctx,CELL_SIZE);
+        }
+        
+        
     }
 
     right() 
     {
         this.position.x += 1;
-        this.draw(ctx);
     }
      
     left() 
     {
         this.position.x -= 1;
-        this.draw(ctx);
+    }
+
+    rotate(degree90){
+        if(degree90){
+            this.rotate += 45;
+                ctx.style.transform = "rotate("+this.rotate+"deg)";
+        }else{
+            this.rotate -= 45;
+            ctx.style.transform = "rotate("+this.rotate+"deg)";
+        }
     }
 
 }

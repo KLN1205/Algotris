@@ -1,5 +1,8 @@
-import { Piece } from './piece.js'
-const ROWS = 20
+import { Piece } from './piece.js';
+const btnRotateP90 = document.getElementById("rotate+90");
+const btnRotateM90 = document.getElementById("rotate-90");
+
+const ROWS = 20;
 const COLS = 10;
 const CELL_SIZE = 35;
 const canvas = document.querySelector('canvas');
@@ -67,6 +70,6 @@ setInterval(() => {
     
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawGrid();
-    p.Descendre(ctx,CELL_SIZE);
+    p.Descendre(ctx,CELL_SIZE,20);
 }, 1000);
 p.draw(ctx,CELL_SIZE);
