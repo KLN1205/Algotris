@@ -7,23 +7,27 @@ canvas.width = COLS * CELL_SIZE; // 10 colonnes × 30px = 300px
 canvas.height = ROWS * CELL_SIZE; // 20 lignes × 30px = 600px
 
 //liste forme des pieces
-const TETROMINOES = {
-    I: [1,1,1,1],
-    O:[[1,1],
-        [1,1]],
-    T: [[1,1,1],
-       [0,1,0]],
-    S: [[0,1,1],
-        [1,1,0]],
-    Z: [[1,1,0],
-        [0,1,1]],
-    J: [[1,0,0],
-        [1,1,1]],
-    L: [[0,0,1],
-        [1,1,1]]
-
+const TETRISFORM = {
+    I: [[1, 1, 1, 1]],
+    O: [[1, 1],
+        [1, 1]],
+    T: [[1, 1, 1],
+        [0, 1, 0]],
+    S: [[0, 1, 1],
+        [1, 1, 0]],
+    Z: [[1, 1, 0],
+        [0, 1, 1]],
+    J: [[1, 0, 0],
+        [1, 1, 1]],
+    L: [[0, 0, 1],
+        [1, 1, 1]]
+};
+const imageblock = ['blue_block', 'red_block', 'cyan_block', 'yellow_block', 'purple_block', 'green_block', 'pink_block'];
+function choisirForm() {
+    const keys = Object.keys(TETRISFORM); // ["I","O","T","S","Z","J","L"]
+    const rndForm = keys[Math.floor(Math.random() * keys.length)];
+    return TETRISFORM[rndForm];
 }
-
 
 let grid = Array(ROWS).fill(0).map(() => Array(COLS).fill(0));
 let ctx;
@@ -34,9 +38,10 @@ function drawGrid() {
     for (let col = 0; col < COLS; col++) {
       const x = col * CELL_SIZE;
       const y = row * CELL_SIZE;
+      const img = new Image();
+      img.src = "";
 
-
-      ctx.fillStyle = grid[row][col] === 0 ? '#000' : getColor(grid[row][col]); 
+      ctx.fillStyle = grid[row][col] === 0 ? '#000' : getColor(); 
       ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
 
 
@@ -46,12 +51,17 @@ function drawGrid() {
   }
 }
 
-function getColor(value) {
-  const colors = ['#000', '#FF0000', '#00FF00', '#0000FF', '#FFFF00']; // Exemple de couleurs
-  return colors[value] || '#000';
+function getColor() {
+  const couleur = ['rgba(35, 47, 224, 1)', '#b32c2cff', '#53d5dfff', '#d8e24aff', '#722cb3ff', '#43db2fff', '#d841d0ff']
+  let nbrAleatoire = Math.floor(Math.random()*couleur.length)
+  return couleur[nbrAleatoire];
+  /*let nbrAleatoire = Math.floor(Math.random()*imageblock.length)
+  return imageblock[nbrAleatoire];*/
 }
  drawGrid();
-let p = new Piece(TETROMINOES.T, "#4fc3f7", { x: 3, y: 0 });
+
+
+let p = new Piece(choisirForm(), getColor(), { x: 3, y: 0 });
 p.GenererForme();
 p.draw(ctx,CELL_SIZE);
-// Appelez drawGrid() après avoir initialisé le canvas et le contexte
+

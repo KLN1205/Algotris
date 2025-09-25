@@ -37,6 +37,7 @@ class Piece {
 
         const img = new Image();
         img.src = canvas.toDataURL();
+
         return img;
     }
 
@@ -55,7 +56,7 @@ class Piece {
                 }
             }
         }
-        console.log(this.position);s
+        console.log(this.position);
     }
     
     Descendre() {
