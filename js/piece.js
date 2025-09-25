@@ -61,28 +61,49 @@ class Piece {
     }
     
     Descendre(ctx,CELL_SIZE) {
-        if(this.form[1].length + this.position.y < 21)
-        this.position.y += 1;
+        if(JSON.stringify(this.form) === JSON.stringify([[1,1],[1,1]]))
+            {
+                if(this.form[1].length + this.position.y < 20)
+                    {
+                        this.position.y += 1;
+                    }
+            }else if(this.form[1].length + this.position.y < 21)
+                {
+                    this.position.y += 1;
+                }
+        
         this.draw(ctx,CELL_SIZE);
     }
 
     right() 
     {
-        if(this.form[0].length + this.position.x <= 9){
+          if(JSON.stringify(this.form) === JSON.stringify([[1,1],[1,1]])){
+             if(this.form[1].length + this.position.x <= 9){
 
-        if(this.position.x <= 6){
+                this.position.x += 1;
+            }
+          }else if(this.position.x <= 6){
             this.position.x += 1;
            
         }
-        }
+       
         
         
     }
      
     left() 
     {
-        if(this.form[0].length + this.position.x >= 4)
-        this.position.x -= 1;
+        if(JSON.stringify(this.form) === JSON.stringify([[1,1],[1,1]]))
+            {
+                 if(this.form[0].length + this.position.x >= 3)
+                    {
+                        this.position.x -= 1;
+                    }
+            }else if(this.form[0].length + this.position.x >= 4)
+                {
+                    this.position.x -= 1;
+                }
+        
     }
 
     rotate(degree90){
