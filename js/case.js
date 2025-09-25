@@ -9,6 +9,22 @@ const canvas = document.querySelector('canvas');
 canvas.width = COLS * CELL_SIZE; // 10 colonnes × 30px = 300px
 canvas.height = ROWS * CELL_SIZE; // 20 lignes × 30px = 600px
 
+let buttonX = document.getElementById("goRight");
+let buttonY = document.getElementById("goLeft");
+
+buttonX.addEventListener("click", function() {
+    p.left();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawGrid();
+    p.draw(ctx,CELL_SIZE);
+});
+buttonY.addEventListener("click", function() {
+    p.right();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawGrid();
+    p.draw(ctx,CELL_SIZE);
+});
+
 //liste forme des pieces
 const TETRISFORM = {
     I: [[1, 1, 1, 1]],
