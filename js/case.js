@@ -14,17 +14,24 @@ let buttonY = document.getElementById("goLeft");
 
 buttonX.addEventListener("click", function() {
     p.left();
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawGrid();
+  reinitialiserGrille();
     p.draw(ctx,CELL_SIZE);
 });
 buttonY.addEventListener("click", function() {
     p.right();
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawGrid();
+reinitialiserGrille();
     p.draw(ctx,CELL_SIZE);
 });
-
+btnRotateP90.addEventListener("click", function() {
+    p.Rotate(ctx,true);
+reinitialiserGrille();
+    p.draw(ctx,CELL_SIZE);
+});
+btnRotateM90.addEventListener("click", function() {
+    p.Rotate(ctx,false);
+    reinitialiserGrille();
+    p.draw(ctx,CELL_SIZE);
+});
 //liste forme des pieces
 const TETRISFORM = {
     I: [[1, 1, 1, 1]],
@@ -77,6 +84,11 @@ function getColor() {
   /*let nbrAleatoire = Math.floor(Math.random()*imageblock.length)
   return imageblock[nbrAleatoire];*/
 }
+function reinitialiserGrille(){
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawGrid();
+}
+
  drawGrid();
 
 
@@ -84,8 +96,7 @@ let p = new Piece(choisirForm(), getColor(), { x: 3, y: 0 });
 p.GenererForme();
 setInterval(() => {
     
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawGrid();
+   reinitialiserGrille();
     p.Descendre(ctx,CELL_SIZE,20);
 }, 1000);
 p.draw(ctx,CELL_SIZE);

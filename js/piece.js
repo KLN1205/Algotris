@@ -42,7 +42,7 @@ class Piece {
         return img;
     }
 
-    draw(ctx,CELL_SIZE) {
+    draw(ctx, CELL_SIZE) {
         for (let y = 0; y < this.form.length; y++) {
             for (let x = 0; x < this.form[y].length; x++) {
                 if (this.form[y][x] === 1) {
@@ -59,41 +59,40 @@ class Piece {
         }
         console.log(this.position);
     }
-    
-    Descendre(ctx,CELL_SIZE) {
-        if(this.form[1].length + this.position.y < 21)
-        this.position.y += 1;
-        this.draw(ctx,CELL_SIZE);
+
+    Descendre(ctx, CELL_SIZE) {
+        if (this.form[1].length + this.position.y < 21)
+            this.position.y += 1;
+        this.draw(ctx, CELL_SIZE);
     }
 
-    right() 
-    {
-        if(this.form[0].length + this.position.x <= 9){
+    right() {
+        if (this.form[0].length + this.position.x <= 9) {
 
-        if(this.position.x <= 6){
-            this.position.x += 1;
-           
+            if (this.position.x <= 6) {
+                this.position.x += 1;
+
+            }
         }
-        }
-        
-        
-    }
-     
-    left() 
-    {
-        if(this.form[0].length + this.position.x >= 4)
-        this.position.x -= 1;
+
+
     }
 
-    rotate(degree90){
-        if(degree90){
-            this.rotate += 45;
-                ctx.style.transform = "rotate("+this.rotate+"deg)";
-        }else{
-            this.rotate -= 45;
-            ctx.style.transform = "rotate("+this.rotate+"deg)";
-        }
+    left() {
+        if (this.form[0].length + this.position.x >= 4)
+            this.position.x -= 1;
     }
+
+    Rotate(ctx, degree90) {
+    if (degree90) {
+        ctx.rotate(45*Math.PI / 2);
+    } else {
+        ctx.rotate(45 * Math.PI / 180);
+    }
+}
+
+
+
 
 }
 
