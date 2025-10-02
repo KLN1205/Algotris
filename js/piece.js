@@ -1,44 +1,8 @@
 class Piece {
-    form;
-    color;
-    position;
-    image;
-    rotate;
-
     constructor(form, color, position) {
         this.form = form;
         this.color = color;
         this.position = position;
-        this.rotate = 0;
-
-        this.image = this.GenererForme();
-    }
-
-    GenererForme() {
-        const rows = this.form.length;
-        const cols = this.form[0].length;
-        const tileSize = 30;
-
-        const canvas = document.createElement('canvas');
-        canvas.width = cols * tileSize;
-        canvas.height = rows * tileSize;
-        const ctx = canvas.getContext('2d');
-
-        for (let y = 0; y < rows; y++) {
-            for (let x = 0; x < cols; x++) {
-                if (this.form[y][x] === 1) {
-                    ctx.fillStyle = this.color;
-                    ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
-                    ctx.strokeStyle = "black";
-                    ctx.strokeRect(x * tileSize, y * tileSize, tileSize, tileSize);
-                }
-            }
-        }
-
-        const img = new Image();
-        img.src = canvas.toDataURL();
-
-        return img;
     }
 
     draw(ctx, CELL_SIZE) {
@@ -64,45 +28,65 @@ class Piece {
         }
     }
 
-    Descendre(ctx, CELL_SIZE) {
-        if (JSON.stringify(this.form) === JSON.stringify([[1, 1], [1, 1]])) {
-            if (this.form[1].length + this.position.y < 20) {
-                this.position.y += 1;
-            }
-        } else if (this.form[1].length + this.position.y < 21) {
-            this.position.y += 1;
-        }
+    // Vérifie si la pièce peut bouger
+    canMove(dx, dy, grid, largeurGrille = 10, hauteurGrille = 20) {
+        for (let y = 0; y < this.form.length; y++) {
+            for (let x = 0; x < this.form[y].length; x++) {
+                if (this.form[y][x] === 1) {
+                    let newX = this.position.x + x + dx;
+                    let newY = this.position.y + y + dy;
 
-        this.draw(ctx, CELL_SIZE);
+                    if (newX < 0 || newX >= largeurGrille || newY < 0 || newY >= hauteurGrille) {
+                        return false;
+                    }
+                    if (grid[newY][newX] !== 0) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
-    right() {
-        if (JSON.stringify(this.form) === JSON.stringify([[1, 1], [1, 1]])) {
-            if (this.form[1].length + this.position.x <= 9) {
-                this.position.x += 1;
+    // Descendre
+    Descendre(ctx, CELL_SIZE, grid) {
+        if (this.canMove(0, 1, grid)) {
+            this.position.y += 1;
+        } else {
+            // Fusionne la pièce dans la grille
+            for (let y = 0; y < this.form.length; y++) {
+                for (let x = 0; x < this.form[y].length; x++) {
+                    if (this.form[y][x] === 1) {
+                        grid[this.position.y + y][this.position.x + x] = this.color;
+                    }
+                }
             }
-        } else if (this.position.x <= 6) {
+            return false; // La pièce est fixée
+        }
+        this.draw(ctx, CELL_SIZE);
+        return true;
+    }
+
+    // Déplacement latéral
+    right(grid) {
+        if (this.canMove(1, 0, grid)) {
             this.position.x += 1;
         }
     }
-
-    left() {
-        if (JSON.stringify(this.form) === JSON.stringify([[1, 1], [1, 1]])) {
-            if (this.form[0].length + this.position.x >= 3) {
-                this.position.x -= 1;
-            }
-        } else if (this.form[0].length + this.position.x >= 4) {
+    left(grid) {
+        if (this.canMove(-1, 0, grid)) {
             this.position.x -= 1;
         }
     }
 
-    Rotate(sens = true, largeurGrille = 10, hauteurGrille = 20) {
+    // Rotation
+    Rotate(sens = true, grid, largeurGrille = 10, hauteurGrille = 20) {
         const rows = this.form.length;
         const cols = this.form[0].length;
         let rotated = [];
 
         if (sens) {
-            // Rotation à droite
+            // Droite
             for (let x = 0; x < cols; x++) {
                 rotated[x] = [];
                 for (let y = rows - 1; y >= 0; y--) {
@@ -110,7 +94,7 @@ class Piece {
                 }
             }
         } else {
-            // Rotation à gauche
+            // Gauche
             for (let x = cols - 1; x >= 0; x--) {
                 let newRow = [];
                 for (let y = 0; y < rows; y++) {
@@ -120,26 +104,12 @@ class Piece {
             }
         }
 
-        // Vérifier si la rotation reste dans la grille
-        if (this.peutTourner(rotated, largeurGrille, hauteurGrille)) {
-            this.form = rotated;
+        // Vérifie si la rotation est possible
+        let temp = this.form;
+        this.form = rotated;
+        if (!this.canMove(0, 0, grid, largeurGrille, hauteurGrille)) {
+            this.form = temp; // annuler si impossible
         }
-    }
-
-    // Vérifie si une forme donnée peut rentrer dans la grille
-    peutTourner(rotated, largeurGrille, hauteurGrille) {
-        for (let y = 0; y < rotated.length; y++) {
-            for (let x = 0; x < rotated[y].length; x++) {
-                if (rotated[y][x] === 1) {
-                    let newX = this.position.x + x;
-                    let newY = this.position.y + y;
-                    if (newX < 0 || newX >= largeurGrille || newY < 0 || newY >= hauteurGrille) {
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
     }
 }
 
