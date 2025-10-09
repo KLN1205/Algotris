@@ -14,7 +14,24 @@ const CELL_SIZE = 35;
 const canvas = document.querySelector('canvas');
 canvas.width = COLS * CELL_SIZE;
 canvas.height = LIGNES * CELL_SIZE;
+let level = 0;
+var levelTime = 
+{
+    0:200,
+    1:1000,
+    2:900,
+    3:800,
+    4:700,
+    5:600,
+    6:500,
+    7:400,
+    8:300,
+    9:200,
+    10:100
+}
 
+let speed = levelTime[0];
+let newSpeesd = levelTime[0];
 let ctx = canvas.getContext('2d');
 
 // Formes Tetris
@@ -138,7 +155,41 @@ function NettoyerLigne() {
         document.getElementById("score").innerText = score;
     }
     ligneSupprimees = 0;
+    
+   if( nbrLigneSupprimer >= 10){
+        
+            level = Math.floor(nbrLigneSupprimer / 10);
+            newSpeesd = levelTime[level];
+        }
+        
     document.getElementById("nbrLigne").innerText = nbrLigneSupprimer;
+}
+let intervalId;
+
+function lancerInterval(vitesse) {
+    if (intervalId) clearInterval(intervalId); 
+
+    intervalId = setInterval(() => {
+        reinitialiserGrille();
+
+        if (!p.Descendre(ctx, CELL_SIZE, grille)) {
+            NettoyerLigne();
+
+            if (newSpeesd != speed) {  
+                clearInterval(intervalId);
+                speed = newSpeesd;
+                lancerInterval(speed); 
+                return; 
+            }
+
+            
+            p = new Piece(TETRISFORM.I, getImage(), { x: 3, y: 0 });
+        }
+
+        p.draw(ctx, CELL_SIZE);
+        document.getElementById("level").innerText = level;
+
+    }, levelTime[level]);
 }
 
 // Première pièce
@@ -148,17 +199,9 @@ console.log(CELL_SIZE);
 console.log(p.image);
 p.draw(ctx, CELL_SIZE);
 // Boucle de descente automatique
-setInterval(() => {
-    reinitialiserGrille();
-    if (!p.Descendre(ctx, CELL_SIZE, grille)) {
-        
-        NettoyerLigne();
-        // Nouvelle pièce
-        p = new Piece(TETRISFORM.I, getImage(), { x: 3, y: 0 });
+lancerInterval(speed);
 
-    }
-    p.draw(ctx, CELL_SIZE);
-}, 10000);
+
 
 // --- Touches ---
 buttonX.addEventListener("click", function () {
