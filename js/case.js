@@ -14,6 +14,8 @@ const CELL_SIZE = 35;
 const canvas = document.querySelector('canvas');
 canvas.width = COLS * CELL_SIZE;
 canvas.height = LIGNES * CELL_SIZE;
+let p;
+let p2;
 let level = 0;
 var levelTime = 
 {
@@ -63,7 +65,7 @@ const imageSources = [
 const imageblock = imageSources.map(src => {
     const img = new Image();
     img.src = "/img/asset/" + src;
-    return img; // retourne l'image pour remplir le tableau
+    return img;
 });
 
 
@@ -106,17 +108,19 @@ function drawGrille() {
 }
 
 
-// Réinitialiser la grille
-function reinitialiserGrille() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawGrille();
-}
 
 // Choisir une forme aléatoire
 function choisirForm() {
     const keys = Object.keys(TETRISFORM);
     const rndForm = keys[Math.floor(Math.random() * keys.length)];
     return TETRISFORM[rndForm];
+}
+
+// Choisir la prochaine pièce 
+function choisirNextPiece(){
+    p = p2;
+    p2 = new Piece(choisirForm(), getImage(), { x: 3, y: 0 });
+    console.log(p2);
 }
 
 // Vérifie et supprime les LIGNES pleines
@@ -170,7 +174,7 @@ function lancerInterval(vitesse) {
     if (intervalId) clearInterval(intervalId); 
 
     intervalId = setInterval(() => {
-        reinitialiserGrille();
+        drawGrille();
 
         if (!p.Descendre(ctx, CELL_SIZE, grille)) {
             NettoyerLigne();
@@ -192,37 +196,46 @@ function lancerInterval(vitesse) {
     }, levelTime[level]);
 }
 
-// Première pièce
-let p = new Piece(TETRISFORM.I, getImage(), { x: 3, y: 0 });
 
-console.log(CELL_SIZE);
-console.log(p.image);
-p.draw(ctx, CELL_SIZE);
-// Boucle de descente automatique
-lancerInterval(speed);
+function drawNext(){
+    
+}
 
+function start(){
+    // Première pièce
+    p = new Piece(choisirForm(), getImage(), { x: 3, y: -1 });
+    //Deuxième pièce
+    p2 = new Piece(choisirForm(), getImage(), { x: 3, y: 0 });
+    p.draw(ctx, CELL_SIZE);
+    // Boucle de descente automatique
+    lancerInterval(speed);
+}
+
+
+
+ start();
 
 
 // --- Touches ---
 buttonX.addEventListener("click", function () {
     p.right(grille);
-    reinitialiserGrille();
+    drawGrille();
     p.draw(ctx, CELL_SIZE);
 });
 buttonY.addEventListener("click", function () {
     p.left(grille);
-    reinitialiserGrille();
+    drawGrille();
     p.draw(ctx, CELL_SIZE);
 });
 btnRotateP90.addEventListener("click", function () {
     p.Rotate(true, grille);
-    reinitialiserGrille();
+    drawGrille();
     p.draw(ctx, CELL_SIZE);
 });
 btnRotateM90.addEventListener("click", function () {
     p.Rotate(false, grille);
-    reinitialiserGrille();
+    drawGrille();
     p.draw(ctx, CELL_SIZE);
 });
-
 drawGrille();
+start();
