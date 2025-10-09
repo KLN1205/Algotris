@@ -54,11 +54,6 @@
             margin-top: 10px;
         }
 
-        .next-case {
-            width: 20px;
-            height: 20px;
-            background-color: #333;
-        }
 
         .next-case.rempli {
             background-color: #4ff787;
