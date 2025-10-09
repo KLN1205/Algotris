@@ -5,12 +5,12 @@ const btnRotateM90 = document.getElementById("rotate-90");
 let buttonX = document.getElementById("goRight");
 let buttonY = document.getElementById("goLeft");
 
-const ROWS = 20;
+const Lignes = 20;
 const COLS = 10;
 const CELL_SIZE = 35;
 const canvas = document.querySelector('canvas');
 canvas.width = COLS * CELL_SIZE;
-canvas.height = ROWS * CELL_SIZE;
+canvas.height = Lignes * CELL_SIZE;
 
 let ctx = canvas.getContext('2d');
 
@@ -53,20 +53,20 @@ function getImage() {
 }
 
 // Grille vide
-let grille = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+let grille = Array.from({ length: Lignes }, () => Array(COLS).fill(0));
 
 // Dessine la grille
 function drawGrille() {
-    for (let row = 0; row < ROWS; row++) {
+    for (let ligne = 0; ligne < Lignes; ligne++) {
         for (let col = 0; col < COLS; col++) {
             const x = col * CELL_SIZE;
-            const y = row * CELL_SIZE;
+            const y = ligne * CELL_SIZE;
 
             // Vérifie si la case contient une image
-            if (grille[row][col] instanceof Image) {
+            if (grille[ligne][col] instanceof Image) {
                 // Si l'image est chargée, on la dessine
-                if (grille[row][col].complete) {
-                    ctx.drawImage(grille[row][col], x, y, CELL_SIZE, CELL_SIZE);
+                if (grille[ligne][col].complete) {
+                    ctx.drawImage(grille[ligne][col], x, y, CELL_SIZE, CELL_SIZE);
                 } else {
                     // Sinon, on dessine une couleur
                     ctx.fillStyle = "#6d3434ff";
@@ -101,12 +101,12 @@ function choisirForm() {
 
 // Vérifie et supprime les lignes pleines
 function NettoyerLigne() {
-    for (let row = ROWS - 1; row >= 0; row--) {
-        if (grille[row].every(cell => cell !== 0)) {
-            grille.splice(row, 1);
+    for (let ligne = Lignes - 1; ligne >= 0; ligne--) {
+        if (grille[ligne].every(cell => cell !== 0)) {
+            grille.splice(ligne, 1);
 
             grille.unshift(Array(COLS).fill(0));
-            row++;
+            ligne++;
         }
     }
 }
