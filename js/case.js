@@ -4,8 +4,11 @@ const btnRotateP90 = document.getElementById("rotate+90");
 const btnRotateM90 = document.getElementById("rotate-90");
 let buttonX = document.getElementById("goRight");
 let buttonY = document.getElementById("goLeft");
-
+let score = 0;
+document.getElementById("score").innerText = score;
 const LIGNES = 20;
+let ligneSupprimees = 0;
+let nbrLigneSupprimer = 0;
 const COLS = 10;
 const CELL_SIZE = 35;
 const canvas = document.querySelector('canvas');
@@ -104,15 +107,42 @@ function NettoyerLigne() {
     for (let ligne = LIGNES - 1; ligne >= 0; ligne--) {
         if (grille[ligne].every(cell => cell !== 0)) {
             grille.splice(ligne, 1);
-
+            ligneSupprimees++;
             grille.unshift(Array(COLS).fill(0));
             ligne++;
         }
     }
+    if (ligneSupprimees == 1) 
+    {
+        nbrLigneSupprimer += 1;
+        
+        score += 40;
+        document.getElementById("score").innerText = score;
+    }
+    else if (ligneSupprimees == 2)
+    {
+        nbrLigneSupprimer += 2;
+        score += 100;
+        document.getElementById("score").innerText = score;
+
+    }
+    else if (ligneSupprimees == 3)
+    {
+        nbrLigneSupprimer += 3;
+        score += 300;
+        document.getElementById("score").innerText = score;
+    }else if (ligneSupprimees == 4)
+    {
+        nbrLigneSupprimer += 4;
+        score += 1000;
+        document.getElementById("score").innerText = score;
+    }
+    ligneSupprimees = 0;
+    document.getElementById("nbrLigne").innerText = nbrLigneSupprimer;
 }
 
 // Première pièce
-let p = new Piece(choisirForm(), getImage(), { x: 3, y: 0 });
+let p = new Piece(TETRISFORM.I, getImage(), { x: 3, y: 0 });
 
 console.log(CELL_SIZE);
 console.log(p.image);
@@ -121,14 +151,14 @@ p.draw(ctx, CELL_SIZE);
 setInterval(() => {
     reinitialiserGrille();
     if (!p.Descendre(ctx, CELL_SIZE, grille)) {
-
+        
         NettoyerLigne();
         // Nouvelle pièce
-        p = new Piece(choisirForm(), getImage(), { x: 3, y: 0 });
+        p = new Piece(TETRISFORM.I, getImage(), { x: 3, y: 0 });
 
     }
     p.draw(ctx, CELL_SIZE);
-}, 1000);
+}, 10000);
 
 // --- Touches ---
 buttonX.addEventListener("click", function () {
