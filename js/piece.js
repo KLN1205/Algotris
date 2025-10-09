@@ -1,35 +1,29 @@
 class Piece {
-    constructor(form, color, position) {
+    form;
+    position;
+    image;
+    constructor(form, image, position) {
         this.form = form;
-        this.color = color;
+        this.image = image;
         this.position = position;
     }
 
-    draw(ctx, CELL_SIZE) {
-        for (let y = 0; y < this.form.length; y++) {
-            for (let x = 0; x < this.form[y].length; x++) {
-                if (this.form[y][x] === 1) {
-                    ctx.fillStyle = this.color;
-                    ctx.fillRect(
-                        (this.position.x + x) * CELL_SIZE,
-                        (this.position.y + y) * CELL_SIZE,
-                        CELL_SIZE,
-                        CELL_SIZE
-                    );
-                    ctx.strokeStyle = '#555';
-                    ctx.strokeRect(
-                        (this.position.x + x) * CELL_SIZE,
-                        (this.position.y + y) * CELL_SIZE,
-                        CELL_SIZE,
-                        CELL_SIZE
-                    );
-                }
+   draw(ctx, CELL_SIZE) {
+    for (let y = 0; y < this.form.length; y++) {
+        for (let x = 0; x < this.form[y].length; x++) {
+            if (this.form[y][x] === 1) {
+                ctx.drawImage(this.image,(this.position.x + x) * CELL_SIZE,(this.position.y + y) * CELL_SIZE,CELL_SIZE,CELL_SIZE);
+
+                ctx.strokeStyle = '#555';
+                ctx.strokeRect((this.position.x + x) * CELL_SIZE,(this.position.y + y) * CELL_SIZE,CELL_SIZE,CELL_SIZE);
             }
         }
     }
+}
 
-    // Vérifie si la pièce peut bouger
-    canMove(dx, dy, grid, largeurGrille = 10, hauteurGrille = 20) {
+
+    
+    canMove(dx, dy, grille, largeurGrille = 10, hauteurGrille = 20) {
         for (let y = 0; y < this.form.length; y++) {
             for (let x = 0; x < this.form[y].length; x++) {
                 if (this.form[y][x] === 1) {
@@ -39,7 +33,7 @@ class Piece {
                     if (newX < 0 || newX >= largeurGrille || newY < 0 || newY >= hauteurGrille) {
                         return false;
                     }
-                    if (grid[newY][newX] !== 0) {
+                    if (grille[newY][newX] !== 0) {
                         return false;
                     }
                 }
@@ -48,39 +42,39 @@ class Piece {
         return true;
     }
 
-    // Descendre
-    Descendre(ctx, CELL_SIZE, grid) {
-        if (this.canMove(0, 1, grid)) {
+   
+    Descendre(ctx, CELL_SIZE, grille) {
+        if (this.canMove(0, 1, grille)) {
             this.position.y += 1;
         } else {
-            // Fusionne la pièce dans la grille
+           
             for (let y = 0; y < this.form.length; y++) {
                 for (let x = 0; x < this.form[y].length; x++) {
                     if (this.form[y][x] === 1) {
-                        grid[this.position.y + y][this.position.x + x] = this.color;
+                        grille[this.position.y + y][this.position.x + x] = this.image;
                     }
                 }
             }
-            return false; // La pièce est fixée
+            return false; 
         }
         this.draw(ctx, CELL_SIZE);
         return true;
     }
 
-    // Déplacement latéral
-    right(grid) {
-        if (this.canMove(1, 0, grid)) {
+
+    right(grille) {
+        if (this.canMove(1, 0, grille)) {
             this.position.x += 1;
         }
     }
-    left(grid) {
-        if (this.canMove(-1, 0, grid)) {
+    left(grille) {
+        if (this.canMove(-1, 0, grille)) {
             this.position.x -= 1;
         }
     }
 
     // Rotation
-    Rotate(sens = true, grid, largeurGrille = 10, hauteurGrille = 20) {
+    Rotate(sens = true, grille, largeurGrille = 10, hauteurGrille = 20) {
         const rows = this.form.length;
         const cols = this.form[0].length;
         let rotated = [];
@@ -104,11 +98,11 @@ class Piece {
             }
         }
 
-        // Vérifie si la rotation est possible
+        
         let temp = this.form;
         this.form = rotated;
-        if (!this.canMove(0, 0, grid, largeurGrille, hauteurGrille)) {
-            this.form = temp; // annuler si impossible
+        if (!this.canMove(0, 0, grille, largeurGrille, hauteurGrille)) {
+            this.form = temp; 
         }
     }
 }

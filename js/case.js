@@ -18,48 +18,78 @@ let ctx = canvas.getContext('2d');
 const TETRISFORM = {
     I: [[1, 1, 1, 1]],
     O: [[1, 1],
-        [1, 1]],
+    [1, 1]],
     T: [[1, 1, 1],
-        [0, 1, 0]],
+    [0, 1, 0]],
     S: [[0, 1, 1],
-        [1, 1, 0]],
+    [1, 1, 0]],
     Z: [[1, 1, 0],
-        [0, 1, 1]],
+    [0, 1, 1]],
     J: [[1, 0, 0],
-        [1, 1, 1]],
+    [1, 1, 1]],
     L: [[0, 0, 1],
-        [1, 1, 1]]
+    [1, 1, 1]]
 };
+const imageSources = [
+    "blue_block.png",
+    "red_block.png",
+    "cyan_block.png",
+    "yellow_block.png",
+    "purple_block.png",
+    "green_block.png",
+    "pink_block.png"
+];
 
-// Couleurs
-function getColor() {
-  const couleur = ['#234FE0', '#B32C2C', '#53D5DF', '#D8E24A', '#722CB3', '#43DB2F', '#D841D0'];
-  let idx = Math.floor(Math.random() * couleur.length);
-  return couleur[idx];
+const imageblock = imageSources.map(src => {
+    const img = new Image();
+    img.src = "/img/asset/" + src;
+    return img; // retourne l'image pour remplir le tableau
+});
+
+
+function getImage() {
+    let idx = Math.floor(Math.random() * imageblock.length);
+    return imageblock[idx];
 }
 
 // Grille vide
-let grid = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+let grille = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
 
-// Dessiner la grille
-function drawGrid() {
-  for (let row = 0; row < ROWS; row++) {
-    for (let col = 0; col < COLS; col++) {
-      const x = col * CELL_SIZE;
-      const y = row * CELL_SIZE;
-      ctx.fillStyle = grid[row][col] === 0 ? '#000' : grid[row][col];
-      ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
+// Dessine la grille
+function drawGrille() {
+    for (let row = 0; row < ROWS; row++) {
+        for (let col = 0; col < COLS; col++) {
+            const x = col * CELL_SIZE;
+            const y = row * CELL_SIZE;
 
-      ctx.strokeStyle = '#555';
-      ctx.strokeRect(x, y, CELL_SIZE, CELL_SIZE);
+            // Vérifie si la case contient une image
+            if (grille[row][col] instanceof Image) {
+                // Si l'image est chargée, on la dessine
+                if (grille[row][col].complete) {
+                    ctx.drawImage(grille[row][col], x, y, CELL_SIZE, CELL_SIZE);
+                } else {
+                    // Sinon, on dessine une couleur
+                    ctx.fillStyle = "#6d3434ff";
+                    ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
+                }
+            } else {
+                //case vide
+                ctx.fillStyle = "#000";
+                ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
+            }
+
+            // Contour case
+            ctx.strokeStyle = '#555';
+            ctx.strokeRect(x, y, CELL_SIZE, CELL_SIZE);
+        }
     }
-  }
 }
 
-// Réinitialiser la grille (redraw)
-function reinitialiserGrille(){
+
+// Réinitialiser la grille
+function reinitialiserGrille() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawGrid();
+    drawGrille();
 }
 
 // Choisir une forme aléatoire
@@ -70,55 +100,56 @@ function choisirForm() {
 }
 
 // Vérifie et supprime les lignes pleines
-function clearLines() {
+function NettoyerLigne() {
     for (let row = ROWS - 1; row >= 0; row--) {
-        if (grid[row].every(cell => cell !== 0)) {
-            // Supprimer la ligne
-            grid.splice(row, 1);
-            // Ajouter une nouvelle ligne vide en haut
-            grid.unshift(Array(COLS).fill(0));
-            row++; // revérifier la même ligne
+        if (grille[row].every(cell => cell !== 0)) {
+            grille.splice(row, 1);
+
+            grille.unshift(Array(COLS).fill(0));
+            row++;
         }
     }
 }
 
 // Première pièce
-let p = new Piece(choisirForm(), getColor(), { x: 3, y: 0 });
-p.draw(ctx, CELL_SIZE);
+let p = new Piece(choisirForm(), getImage(), { x: 3, y: 0 });
 
+console.log(CELL_SIZE);
+console.log(p.image);
+p.draw(ctx, CELL_SIZE);
 // Boucle de descente automatique
 setInterval(() => {
-   reinitialiserGrille();
-   if (!p.Descendre(ctx, CELL_SIZE, grid)) {
-       // La pièce est fixée → vérifier lignes pleines
-       clearLines();
-       // Nouvelle pièce
-       p = new Piece(choisirForm(), getColor(), { x: 3, y: 0 });
-   }
-   p.draw(ctx, CELL_SIZE);
+    reinitialiserGrille();
+    if (!p.Descendre(ctx, CELL_SIZE, grille)) {
+
+        NettoyerLigne();
+        // Nouvelle pièce
+        p = new Piece(choisirForm(), getImage(), { x: 3, y: 0 });
+
+    }
+    p.draw(ctx, CELL_SIZE);
 }, 1000);
 
-// --- Contrôles ---
-buttonX.addEventListener("click", function() {
-    p.right(grid);
+// --- Touches ---
+buttonX.addEventListener("click", function () {
+    p.right(grille);
     reinitialiserGrille();
-    p.draw(ctx,CELL_SIZE);
+    p.draw(ctx, CELL_SIZE);
 });
-buttonY.addEventListener("click", function() {
-    p.left(grid);
+buttonY.addEventListener("click", function () {
+    p.left(grille);
     reinitialiserGrille();
-    p.draw(ctx,CELL_SIZE);
+    p.draw(ctx, CELL_SIZE);
 });
-btnRotateP90.addEventListener("click", function() {
-    p.Rotate(true, grid);
+btnRotateP90.addEventListener("click", function () {
+    p.Rotate(true, grille);
     reinitialiserGrille();
-    p.draw(ctx,CELL_SIZE);
+    p.draw(ctx, CELL_SIZE);
 });
-btnRotateM90.addEventListener("click", function() {
-    p.Rotate(false, grid);
+btnRotateM90.addEventListener("click", function () {
+    p.Rotate(false, grille);
     reinitialiserGrille();
-    p.draw(ctx,CELL_SIZE);
+    p.draw(ctx, CELL_SIZE);
 });
 
-// Lancer le dessin initial
-drawGrid();
+drawGrille();
