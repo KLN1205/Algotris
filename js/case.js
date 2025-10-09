@@ -5,12 +5,12 @@ const btnRotateM90 = document.getElementById("rotate-90");
 let buttonX = document.getElementById("goRight");
 let buttonY = document.getElementById("goLeft");
 
-const Lignes = 20;
+const LIGNES = 20;
 const COLS = 10;
 const CELL_SIZE = 35;
 const canvas = document.querySelector('canvas');
 canvas.width = COLS * CELL_SIZE;
-canvas.height = Lignes * CELL_SIZE;
+canvas.height = LIGNES * CELL_SIZE;
 
 let ctx = canvas.getContext('2d');
 
@@ -53,11 +53,11 @@ function getImage() {
 }
 
 // Grille vide
-let grille = Array.from({ length: Lignes }, () => Array(COLS).fill(0));
+let grille = Array.from({ length: LIGNES }, () => Array(COLS).fill(0));
 
 // Dessine la grille
 function drawGrille() {
-    for (let ligne = 0; ligne < Lignes; ligne++) {
+    for (let ligne = 0; ligne < LIGNES; ligne++) {
         for (let col = 0; col < COLS; col++) {
             const x = col * CELL_SIZE;
             const y = ligne * CELL_SIZE;
@@ -99,9 +99,9 @@ function choisirForm() {
     return TETRISFORM[rndForm];
 }
 
-// Vérifie et supprime les lignes pleines
+// Vérifie et supprime les LIGNES pleines
 function NettoyerLigne() {
-    for (let ligne = Lignes - 1; ligne >= 0; ligne--) {
+    for (let ligne = LIGNES - 1; ligne >= 0; ligne--) {
         if (grille[ligne].every(cell => cell !== 0)) {
             grille.splice(ligne, 1);
 
