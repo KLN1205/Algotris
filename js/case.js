@@ -8,10 +8,13 @@ const nextCanvas = document.getElementById('nextPiece');
 const nextCtx = nextCanvas.getContext('2d');
 
 let score = 0;
+let bestScore = 0;
 document.getElementById("score").innerText = score;
+document.getElementById("Bestscore").innerText = bestScore;
 const LIGNES = 20;
 let ligneSupprimees = 0;
 let nbrLigneSupprimer = 0;
+    document.getElementById("nbrLigne").innerText = nbrLigneSupprimer;
 const COLS = 10;
 const CELL_SIZE = 35;
 const canvas = document.querySelector('canvas');
@@ -120,32 +123,33 @@ function NettoyerLigne() {
     }
     if (ligneSupprimees == 1) 
     {
-        nbrLigneSupprimer += 1;
-        
+        nbrLigneSupprimer += 1; 
         score += 40;
-        document.getElementById("score").innerText = score;
     }
     else if (ligneSupprimees == 2)
     {
         nbrLigneSupprimer += 2;
         score += 100;
-        document.getElementById("score").innerText = score;
 
     }
     else if (ligneSupprimees == 3)
     {
         nbrLigneSupprimer += 3;
         score += 300;
-        document.getElementById("score").innerText = score;
     }else if (ligneSupprimees == 4)
     {
         nbrLigneSupprimer += 4;
         score += 1000;
-        document.getElementById("score").innerText = score;
+    }
+    if(score > bestScore){
+        bestScore = score;
     }
     ligneSupprimees = 0;
+    document.getElementById("score").innerText = score;
+    document.getElementById("Bestscore").innerText = bestScore;
     document.getElementById("nbrLigne").innerText = nbrLigneSupprimer;
 }
+
 
 
 function drawNext() {
@@ -168,24 +172,65 @@ function drawNext() {
         }
     }
 }
+let intervalId; // <-- Déclaré globalement
+
+function startGameLoop() {
+    // Si un interval existe déjà, on le supprime
+    if (intervalId) clearInterval(intervalId);
+
+    intervalId = setInterval(() => {
+        drawGrille();
+
+        if (!p.Descendre(ctx, CELL_SIZE, grille)) {
+            if (p.position.y === 0) {
+                gameOver();
+                clearInterval(intervalId); // Arrête la boucle
+                return;
+            }
+            p.draw(ctx, CELL_SIZE);
+            NettoyerLigne();
+            choisirNextPiece();
+        }
+
+        p.draw(ctx, CELL_SIZE);
+    }, 500);
+}
+
+// Modifier start() pour lancer la boucle
 function start() {
-    p2 = new Piece(choisirForm(), getImage(), { x: 3, y: 0 });
+    p2 = new Piece(choisirForm(), getImage(), { x: 3, y: -1 });
     choisirNextPiece();
     drawNext();
     p.draw(ctx, CELL_SIZE);
+
+    startGameLoop(); // <-- démarre la boucle de descente
 }
 
-// Boucle de descente automatique
-setInterval(() => {
-    drawGrille();
-    if (!p.Descendre(ctx, CELL_SIZE, grille)) {
-        p.draw(ctx, CELL_SIZE);
-        NettoyerLigne();
-        choisirNextPiece();
-    }
-    p.draw(ctx, CELL_SIZE);
-}, 500);
+// Réinitialiser le jeu
+function resetGame() {
+    // Réinitialiser variables
+    score = 0;
+    ligneSupprimees = 0;
+    nbrLigneSupprimer = 0;
+    grille = Array.from({ length: LIGNES }, () => Array(COLS).fill(0));
 
+    document.getElementById("score").innerText = score;
+    document.getElementById("nbrLigne").innerText = nbrLigneSupprimer;
+    document.getElementById("gameOver").style.display = "none";
+
+    // Redémarrer le jeu
+    start();
+    drawGrille();
+}
+
+
+// Bouton Rejouer
+document.getElementById("replayBtn").addEventListener("click", resetGame);
+// Fonction pour afficher la page de fin
+function gameOver() {
+    document.getElementById("finalScore").innerText = score;
+    document.getElementById("gameOver").style.display = "flex";
+}
 // --- Touches ---
 buttonX.addEventListener("click", function () {
     p.right(grille);

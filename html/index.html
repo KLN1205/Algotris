@@ -19,7 +19,9 @@
 
         <div class="sidebar">
             <div class="box">LIGNES<br><p id="nbrLigne"></p></div>
-            <div class="box">
+            <div class="box"><br>
+                <span>BESTSCORE</span>
+                <p id="Bestscore"></p><br>
                 <span>SCORE</span>
                 <p id="score"></p>
             </div>
@@ -38,6 +40,14 @@
         <div id="goLeft" class="box">X:-1px</div>
         <div id="goRight" class="box">X: +1px</div>
     </div>
+
+    <!-- Page de fin -->
+<div id="gameOver" class="game-over" style="display: none;">
+    <h1>Perdu</h1>
+    <p>Votre score : <span id="finalScore">0</span></p>
+    <button id="replayBtn">Rejouer</button>
+</div>
+
 </body>
 
 <script type="module" src="/js/case.js"></script>
