@@ -13,23 +13,21 @@
     <div class="tetris-container">
         <div id="plateau" class="plateau">
             <canvas>
-                
+
             </canvas>
         </div>
 
         <div class="sidebar">
-            <div class="box">LIGNES<br><p id="nbrLigne"></p></div>
-            <div class="box">BEST<p id="bestscore">30290</p>SCORE<p id="score"></p></div>
+            <div class="box">LIGNES<br>
+                <p id="nbrLigne"></p>
+            </div>
+            <div class="box">BEST<p id="bestscore">30290</p>SCORE<p id="score"></p>
+            </div>
             <div class="box">
                 NEXT
-                <div class="next-grid">
-                    <div class="next-case rempli"></div>
-                    <div class="next-case rempli"></div>
-                    <div class="next-case rempli"></div>
-                    <br>
-                    <div class="next-case rempli"></div>
-                </div>
+                <canvas id="nextPiece" width="140" height="140"></canvas>
             </div>
+
             <div class="box">LEVEL<br>1</div>
         </div>
     </div>

@@ -4,6 +4,9 @@ const btnRotateP90 = document.getElementById("rotate+90");
 const btnRotateM90 = document.getElementById("rotate-90");
 let buttonX = document.getElementById("goRight");
 let buttonY = document.getElementById("goLeft");
+const nextCanvas = document.getElementById('nextPiece');
+const nextCtx = nextCanvas.getContext('2d');
+
 let score = 0;
 document.getElementById("score").innerText = score;
 const LIGNES = 20;
@@ -99,10 +102,10 @@ function choisirForm() {
 }
 
 // Choisir la prochaine pièce 
-function choisirNextPiece(){
+function choisirNextPiece() {
     p = p2;
     p2 = new Piece(choisirForm(), getImage(), { x: 3, y: 0 });
-    console.log(p2);
+    drawNext();
 }
 
 // Vérifie et supprime les LIGNES pleines
@@ -145,15 +148,30 @@ function NettoyerLigne() {
 }
 
 
-function drawNext(){
-    
-}
+function drawNext() {
+    //efface le canvas Next
+    nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
 
-function start(){
-    // Première pièce
-    p = new Piece(choisirForm(), getImage(), { x: 3, y: -1 });
-    //Deuxième pièce
+    // centre la pièce dans la box
+    const offsetX = Math.floor((nextCanvas.width / CELL_SIZE - p2.form[0].length) / 2);
+    const offsetY = Math.floor((nextCanvas.height / CELL_SIZE - p2.form.length) / 2);
+        console.log(p2.image);
+    // Dessine la pièce p2
+    for (let y = 0; y < p2.form.length; y++) {
+        for (let x = 0; x < p2.form[y].length; x++) {
+        
+            if (p2.form[y][x] === 1) {
+                nextCtx.drawImage(p2.image,(x + offsetX) * CELL_SIZE * 1,(y + offsetY) * CELL_SIZE * 1,CELL_SIZE * 1,CELL_SIZE * 1);
+                nextCtx.strokeStyle = '#555';
+                nextCtx.strokeRect((x + offsetX) * CELL_SIZE * 1,(y + offsetY) * CELL_SIZE * 1,CELL_SIZE * 1,CELL_SIZE * 1);
+            }
+        }
+    }
+}
+function start() {
     p2 = new Piece(choisirForm(), getImage(), { x: 3, y: 0 });
+    choisirNextPiece();
+    drawNext();
     p.draw(ctx, CELL_SIZE);
 }
 
