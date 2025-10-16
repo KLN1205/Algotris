@@ -19,6 +19,24 @@ canvas.width = COLS * CELL_SIZE;
 canvas.height = LIGNES * CELL_SIZE;
 let p;
 let p2;
+let level = 0;
+var levelTime = 
+{
+    0:200,
+    1:1000,
+    2:900,
+    3:800,
+    4:700,
+    5:600,
+    6:500,
+    7:400,
+    8:300,
+    9:200,
+    10:100
+}
+
+let speed = levelTime[0];
+let newSpeesd = levelTime[0];
 let ctx = canvas.getContext('2d');
 
 // Formes Tetris
@@ -144,7 +162,41 @@ function NettoyerLigne() {
         document.getElementById("score").innerText = score;
     }
     ligneSupprimees = 0;
+    
+   if( nbrLigneSupprimer >= 10){
+        
+            level = Math.floor(nbrLigneSupprimer / 10);
+            newSpeesd = levelTime[level];
+        }
+        
     document.getElementById("nbrLigne").innerText = nbrLigneSupprimer;
+}
+let intervalId;
+
+function lancerInterval(vitesse) {
+    if (intervalId) clearInterval(intervalId); 
+
+    intervalId = setInterval(() => {
+        drawGrille();
+
+        if (!p.Descendre(ctx, CELL_SIZE, grille)) {
+            NettoyerLigne();
+
+            if (newSpeesd != speed) {  
+                clearInterval(intervalId);
+                speed = newSpeesd;
+                lancerInterval(speed); 
+                return; 
+            }
+
+            
+            p = new Piece(TETRISFORM.I, getImage(), { x: 3, y: 0 });
+        }
+
+        p.draw(ctx, CELL_SIZE);
+        document.getElementById("level").innerText = level;
+
+    }, levelTime[level]);
 }
 
 
@@ -173,18 +225,14 @@ function start() {
     choisirNextPiece();
     drawNext();
     p.draw(ctx, CELL_SIZE);
+    // Boucle de descente automatique
+    lancerInterval(speed);
 }
 
-// Boucle de descente automatique
-setInterval(() => {
-    drawGrille();
-    if (!p.Descendre(ctx, CELL_SIZE, grille)) {
-        p.draw(ctx, CELL_SIZE);
-        NettoyerLigne();
-        choisirNextPiece();
-    }
-    p.draw(ctx, CELL_SIZE);
-}, 1000);
+
+
+ start();
+
 
 // --- Touches ---
 buttonX.addEventListener("click", function () {
