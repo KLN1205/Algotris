@@ -1,5 +1,6 @@
 import { Piece } from './piece.js';
 
+// Initialisation
 const btnRotateP90 = document.getElementById("rotate+90");
 const btnRotateM90 = document.getElementById("rotate-90");
 let buttonX = document.getElementById("goRight");
@@ -14,7 +15,7 @@ document.getElementById("Bestscore").innerText = bestScore;
 const LIGNES = 20;
 let ligneSupprimees = 0;
 let nbrLigneSupprimer = 0;
-    document.getElementById("nbrLigne").innerText = nbrLigneSupprimer;
+document.getElementById("nbrLigne").innerText = nbrLigneSupprimer;
 const COLS = 10;
 const CELL_SIZE = 35;
 const canvas = document.querySelector('canvas');
@@ -56,7 +57,6 @@ const imageblock = imageSources.map(src => {
     return img;
 });
 
-
 function getImage() {
     let idx = Math.floor(Math.random() * imageblock.length);
     return imageblock[idx];
@@ -72,30 +72,23 @@ function drawGrille() {
             const x = col * CELL_SIZE;
             const y = ligne * CELL_SIZE;
 
-            // Vérifie si la case contient une image
             if (grille[ligne][col] instanceof Image) {
-                // Si l'image est chargée, on la dessine
                 if (grille[ligne][col].complete) {
                     ctx.drawImage(grille[ligne][col], x, y, CELL_SIZE, CELL_SIZE);
                 } else {
-                    // Sinon, on dessine une couleur
                     ctx.fillStyle = "#6d3434ff";
                     ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
                 }
             } else {
-                //case vide
                 ctx.fillStyle = "#000";
                 ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
             }
 
-            // Contour case
             ctx.strokeStyle = '#555';
             ctx.strokeRect(x, y, CELL_SIZE, CELL_SIZE);
         }
     }
 }
-
-
 
 // Choisir une forme aléatoire
 function choisirForm() {
@@ -121,27 +114,20 @@ function NettoyerLigne() {
             ligne++;
         }
     }
-    if (ligneSupprimees == 1) 
-    {
-        nbrLigneSupprimer += 1; 
+    if (ligneSupprimees == 1) {
+        nbrLigneSupprimer += 1;
         score += 40;
-    }
-    else if (ligneSupprimees == 2)
-    {
+    } else if (ligneSupprimees == 2) {
         nbrLigneSupprimer += 2;
         score += 100;
-
-    }
-    else if (ligneSupprimees == 3)
-    {
+    } else if (ligneSupprimees == 3) {
         nbrLigneSupprimer += 3;
         score += 300;
-    }else if (ligneSupprimees == 4)
-    {
+    } else if (ligneSupprimees == 4) {
         nbrLigneSupprimer += 4;
         score += 1000;
     }
-    if(score > bestScore){
+    if (score > bestScore) {
         bestScore = score;
     }
     ligneSupprimees = 0;
@@ -150,33 +136,36 @@ function NettoyerLigne() {
     document.getElementById("nbrLigne").innerText = nbrLigneSupprimer;
 }
 
-
-
 function drawNext() {
-    //efface le canvas Next
     nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
 
-    // centre la pièce dans la box
     const offsetX = Math.floor((nextCanvas.width / CELL_SIZE - p2.form[0].length) / 2);
     const offsetY = Math.floor((nextCanvas.height / CELL_SIZE - p2.form.length) / 2);
-        console.log(p2.image);
-    // Dessine la pièce p2
+
     for (let y = 0; y < p2.form.length; y++) {
         for (let x = 0; x < p2.form[y].length; x++) {
-        
             if (p2.form[y][x] === 1) {
-                nextCtx.drawImage(p2.image,(x + offsetX) * CELL_SIZE * 1,(y + offsetY) * CELL_SIZE * 1,CELL_SIZE * 1,CELL_SIZE * 1);
+                nextCtx.drawImage(p2.image,
+                    (x + offsetX) * CELL_SIZE,
+                    (y + offsetY) * CELL_SIZE,
+                    CELL_SIZE, CELL_SIZE);
                 nextCtx.strokeStyle = '#555';
-                nextCtx.strokeRect((x + offsetX) * CELL_SIZE * 1,(y + offsetY) * CELL_SIZE * 1,CELL_SIZE * 1,CELL_SIZE * 1);
+                nextCtx.strokeRect(
+                    (x + offsetX) * CELL_SIZE,
+                    (y + offsetY) * CELL_SIZE,
+                    CELL_SIZE, CELL_SIZE);
             }
         }
     }
 }
-let intervalId; // <-- Déclaré globalement
+
+let intervalId;
+let fastDrop = false;
 
 function startGameLoop() {
-    // Si un interval existe déjà, on le supprime
     if (intervalId) clearInterval(intervalId);
+
+    let speed = fastDrop ? 50 : 500;
 
     intervalId = setInterval(() => {
         drawGrille();
@@ -184,7 +173,7 @@ function startGameLoop() {
         if (!p.Descendre(ctx, CELL_SIZE, grille)) {
             if (p.position.y === 0) {
                 gameOver();
-                clearInterval(intervalId); // Arrête la boucle
+                clearInterval(intervalId);
                 return;
             }
             p.draw(ctx, CELL_SIZE);
@@ -193,22 +182,21 @@ function startGameLoop() {
         }
 
         p.draw(ctx, CELL_SIZE);
-    }, 500);
+
+    }, speed);
 }
 
-// Modifier start() pour lancer la boucle
 function start() {
     p2 = new Piece(choisirForm(), getImage(), { x: 3, y: -1 });
     choisirNextPiece();
     drawNext();
     p.draw(ctx, CELL_SIZE);
 
-    startGameLoop(); // <-- démarre la boucle de descente
+    startGameLoop();
 }
 
 // Réinitialiser le jeu
 function resetGame() {
-    // Réinitialiser variables
     score = 0;
     ligneSupprimees = 0;
     nbrLigneSupprimer = 0;
@@ -218,20 +206,21 @@ function resetGame() {
     document.getElementById("nbrLigne").innerText = nbrLigneSupprimer;
     document.getElementById("gameOver").style.display = "none";
 
-    // Redémarrer le jeu
     start();
     drawGrille();
 }
 
-
 // Bouton Rejouer
 document.getElementById("replayBtn").addEventListener("click", resetGame);
-// Fonction pour afficher la page de fin
+
+// Fonction de fin
 function gameOver() {
     document.getElementById("finalScore").innerText = score;
+    document.getElementById("finalBestScore").innerText = bestScore;
     document.getElementById("gameOver").style.display = "flex";
 }
-// --- Touches ---
+
+// --- Boutons existants ---
 buttonX.addEventListener("click", function () {
     p.right(grille);
     drawGrille();
@@ -252,5 +241,58 @@ btnRotateM90.addEventListener("click", function () {
     drawGrille();
     p.draw(ctx, CELL_SIZE);
 });
+
+// --- Contrôles clavier ---
+document.addEventListener("keydown", (e) => {
+    switch (e.key) {
+        case "a":
+        case "A":
+            p.left(grille);
+            drawGrille();
+            p.draw(ctx, CELL_SIZE);
+            break;
+        case "d":
+        case "D":
+            p.right(grille);
+            drawGrille();
+            p.draw(ctx, CELL_SIZE);
+            break;
+        case "s":
+        case "S":
+            if (!fastDrop) {
+                fastDrop = true;
+                clearInterval(intervalId);
+                startGameLoop();
+            }
+            break;
+        case " ":
+            e.preventDefault();
+            while (p.Descendre(ctx, CELL_SIZE, grille)) { }
+            drawGrille();
+            p.draw(ctx, CELL_SIZE);
+            break;
+        case "q":
+        case "Q":
+            p.Rotate(false, grille);
+            drawGrille();
+            p.draw(ctx, CELL_SIZE);
+            break;
+        case "e":
+        case "E":
+            p.Rotate(true, grille);
+            drawGrille();
+            p.draw(ctx, CELL_SIZE);
+            break;
+    }
+});
+
+document.addEventListener("keyup", (e) => {
+    if (e.key === "S" || e.key === "s") {
+        fastDrop = false;
+        clearInterval(intervalId);
+        startGameLoop();
+    }
+});
+
 drawGrille();
 start();
