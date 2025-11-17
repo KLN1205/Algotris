@@ -8,17 +8,18 @@
 </head>
 
 <body>
-    <!--<img src="../img/fond3.gif" alt="background" class="background-gif">-->
-
     <div class="tetris-container">
         <div id="plateau" class="plateau">
             <canvas>
-
+                
             </canvas>
         </div>
-
+        
+        <div class="partieDroite">
         <div class="sidebar">
-            <div class="box">LIGNES<br><p id="nbrLigne"></p></div>
+            <div class="box">LIGNES<br>
+                <p id="nbrLigne"></p>
+            </div>
             <div class="box"><br>
                 <span>BESTSCORE</span>
                 <p id="Bestscore"></p><br>
@@ -33,22 +34,28 @@
             <div class="box">LEVEL<br>1</div>
         </div>
     </div>
+    <div class="info">
+        <h1>TOUCHES</h1>
+        <p>Gauche : A ou ← </p>
+        <p>Droite : D ou →</p>
+        <p>Descendre : S ou ↓</p>
+        <p>Tomber : Espace</p>
+    </div>
 
+    </div>
     <div class="deplacement">
         <div id="rotate-90" class="box">rotate: -90deg</div>
         <div id="rotate+90" class="box">rotate: +90deg</div>
         <div id="goLeft" class="box">X:-1px</div>
         <div id="goRight" class="box">X: +1px</div>
     </div>
-
     <!-- Page de fin -->
-<div id="gameOver" class="game-over" style="display: none;">
-    <h1>Perdu</h1>
-    <p>Meilleur score : <span id="finalBestScore">0</span></p>
-    <p>Votre score : <span id="finalScore">0</span></p>
-    <button id="replayBtn">Rejouer</button>
-</div>
-
+    <div id="gameOver" class="game-over" style="display: none;">
+        <h1>Perdu</h1>
+        <p>Meilleur score : <span id="finalBestScore">0</span></p>
+        <p>Votre score : <span id="finalScore">0</span></p>
+        <button id="replayBtn">Rejouer</button>
+    </div>
 </body>
 
 <script type="module" src="/js/case.js"></script>

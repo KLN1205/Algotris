@@ -24,7 +24,7 @@ canvas.height = LIGNES * CELL_SIZE;
 let p;
 let p2;
 let ctx = canvas.getContext('2d');
-
+let speedInterval = 500;
 // Formes Tetris
 const TETRISFORM = {
     I: [[1, 1, 1, 1]],
@@ -114,19 +114,37 @@ function NettoyerLigne() {
             ligne++;
         }
     }
-    if (ligneSupprimees == 1) {
-        nbrLigneSupprimer += 1;
-        score += 40;
-    } else if (ligneSupprimees == 2) {
-        nbrLigneSupprimer += 2;
-        score += 100;
-    } else if (ligneSupprimees == 3) {
-        nbrLigneSupprimer += 3;
-        score += 300;
-    } else if (ligneSupprimees == 4) {
-        nbrLigneSupprimer += 4;
-        score += 1000;
+    switch (ligneSupprimees) {
+        case 1:
+            nbrLigneSupprimer += 1;
+            score += 40;
+            break;
+        case 2:
+            nbrLigneSupprimer += 2;
+            score += 100;
+            break;
+        case 3:
+            nbrLigneSupprimer += 3;
+            score += 300;
+            break;
+        case 4:
+            nbrLigneSupprimer += 4;
+            score += 1000;
+            break;
     }
+
+    if (nbrLigneSupprimer >= 40) {
+        speedInterval = 100;
+    } else if (nbrLigneSupprimer >= 30) {
+        speedInterval = 200;
+    } else if (nbrLigneSupprimer >= 20) {
+        speedInterval = 300;
+    } else if (nbrLigneSupprimer >= 10) {
+        speedInterval = 400;
+    } else {
+        speedInterval = 500;
+    }
+
     if (score > bestScore) {
         bestScore = score;
     }
@@ -165,7 +183,7 @@ let fastDrop = false;
 function startGameLoop() {
     if (intervalId) clearInterval(intervalId);
 
-    let speed = fastDrop ? 50 : 500;
+    let speed = fastDrop ? 50 : speedInterval;
 
     intervalId = setInterval(() => {
         drawGrille();
@@ -200,6 +218,7 @@ function resetGame() {
     score = 0;
     ligneSupprimees = 0;
     nbrLigneSupprimer = 0;
+    speedInterval = 500;
     grille = Array.from({ length: LIGNES }, () => Array(COLS).fill(0));
 
     document.getElementById("score").innerText = score;
@@ -245,18 +264,21 @@ btnRotateM90.addEventListener("click", function () {
 // --- Contrôles clavier ---
 document.addEventListener("keydown", (e) => {
     switch (e.key) {
+        case "ArrowLeft":
         case "a":
         case "A":
             p.left(grille);
             drawGrille();
             p.draw(ctx, CELL_SIZE);
             break;
+        case "ArrowRight":
         case "d":
         case "D":
             p.right(grille);
             drawGrille();
             p.draw(ctx, CELL_SIZE);
             break;
+        case "ArrowDown":
         case "s":
         case "S":
             if (!fastDrop) {
@@ -271,8 +293,9 @@ document.addEventListener("keydown", (e) => {
             drawGrille();
             p.draw(ctx, CELL_SIZE);
             break;
-        case "q":
-        case "Q":
+        case "ArrowUp":
+        case "w":
+        case "W":
             p.Rotate(false, grille);
             drawGrille();
             p.draw(ctx, CELL_SIZE);
@@ -287,7 +310,7 @@ document.addEventListener("keydown", (e) => {
 });
 
 document.addEventListener("keyup", (e) => {
-    if (e.key === "S" || e.key === "s") {
+    if (e.key === "S" || e.key === "s" || e.key === "ArrowDown") {
         fastDrop = false;
         clearInterval(intervalId);
         startGameLoop();
