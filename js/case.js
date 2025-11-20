@@ -107,39 +107,52 @@ function choisirNextPiece() {
 // Vérifie et supprime les LIGNES pleines
 function NettoyerLigne() {
     for (let ligne = LIGNES - 1; ligne >= 0; ligne--) {
-        if (grille[ligne].every(cell => cell !== 0)) { // ligne pleine
-            grille.splice(ligne, 1); // supprime la ligne
+        if (grille[ligne].every(cell => cell !== 0)) {
+            grille.splice(ligne, 1);
             ligneSupprimees++;
-            grille.unshift(Array(COLS).fill(0)); // ajoute une nouvelle ligne vide en haut
-            ligne++; // pour vérifier la ligne descendue
+            grille.unshift(Array(COLS).fill(0));
+            ligne++;
         }
     }
-
-    // Mise à jour du score
     switch (ligneSupprimees) {
-        case 1: nbrLigneSupprimer += 1; score += 40; break;
-        case 2: nbrLigneSupprimer += 2; score += 100; break;
-        case 3: nbrLigneSupprimer += 3; score += 300; break;
-        case 4: nbrLigneSupprimer += 4; score += 1000; break;
+        case 1:
+            nbrLigneSupprimer += 1;
+            score += 40;
+            break;
+        case 2:
+            nbrLigneSupprimer += 2;
+            score += 100;
+            break;
+        case 3:
+            nbrLigneSupprimer += 3;
+            score += 300;
+            break;
+        case 4:
+            nbrLigneSupprimer += 4;
+            score += 1000;
+            break;
     }
 
-    // Ajustement de la vitesse
-    if (nbrLigneSupprimer >= 40) speedInterval = 100;
-    else if (nbrLigneSupprimer >= 30) speedInterval = 200;
-    else if (nbrLigneSupprimer >= 20) speedInterval = 300;
-    else if (nbrLigneSupprimer >= 10) speedInterval = 400;
-    else speedInterval = 500;
+    if (nbrLigneSupprimer >= 40) {
+        speedInterval = 100;
+    } else if (nbrLigneSupprimer >= 30) {
+        speedInterval = 200;
+    } else if (nbrLigneSupprimer >= 20) {
+        speedInterval = 300;
+    } else if (nbrLigneSupprimer >= 10) {
+        speedInterval = 400;
+    } else {
+        speedInterval = 500;
+    }
 
-    if (score > bestScore) bestScore = score;
+    if (score > bestScore) {
+        bestScore = score;
+    }
     ligneSupprimees = 0;
-
-    // Mise à jour de l'affichage
     document.getElementById("score").innerText = score;
     document.getElementById("Bestscore").innerText = bestScore;
     document.getElementById("nbrLigne").innerText = nbrLigneSupprimer;
 }
-
-
 
 function drawNext() {
     nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
@@ -171,6 +184,7 @@ function startGameLoop() {
     if (intervalId) clearInterval(intervalId);
 
     let speed = fastDrop ? 50 : speedInterval;
+
     intervalId = setInterval(() => {
         drawGrille();
 
@@ -191,20 +205,13 @@ function startGameLoop() {
 }
 
 function start() {
-    p2 = new Piece(choisirForm(), getImage(), { x: 3, y: -1 });
-    if (!p2.image.complete) {
-        p2.image.onload = () => {
-            choisirNextPiece();
-            p.draw(ctx, CELL_SIZE);
-            startGameLoop();
-        };
-    } else {
-        choisirNextPiece();
-        p.draw(ctx, CELL_SIZE);
-        startGameLoop();
-    }
-}
+    p2 = new Piece(choisirForm(), getImage(), { x: 3, y: 0 });
+    choisirNextPiece();
+    drawNext();
 
+    p.draw(ctx, CELL_SIZE);
+    startGameLoop();
+}
 
 // Réinitialiser le jeu
 function resetGame() {
@@ -311,4 +318,9 @@ document.addEventListener("keyup", (e) => {
 });
 
 drawGrille();
-start();
+Promise.all(imageblock.map(img =>
+    new Promise(resolve => { img.onload = resolve; })
+)).then(() => {
+    start(); 
+});
+
